@@ -7,6 +7,7 @@ mongoose.set('strictQuery', false);
 mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true, }).then(() => console.log("MongoDB Connected....")).catch((err) => console.log(err));
 
 app.use("/api/", require("./router/customerRouter"));
+app.use("/api/", require("./router/employeeRouter"));
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT) 

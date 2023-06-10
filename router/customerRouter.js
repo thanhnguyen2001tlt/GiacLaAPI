@@ -1,6 +1,5 @@
 const express = require('express');
 const customerRouter = express.Router();
-const bodyParser = require('body-parser');
 const Customer = require('../models/customer');
 
 // Lấy danh sách khách hàng
