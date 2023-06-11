@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
-  customer: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }],
+  customer:String,
   orderDate: Date,
   deliveryDate: Date,
   totalAmount: Number,

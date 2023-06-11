@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const OrderDetailSchema = new mongoose.Schema({
-  order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
-  service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
+  order: String,
+  service: String,
   servicePrice: Number,
   quantity: Number,
   subtotal: Number
