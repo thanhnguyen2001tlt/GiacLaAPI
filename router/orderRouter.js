@@ -1,6 +1,7 @@
 const express = require('express');
 const orderRouter = express.Router();
 const Order = require('../models/order');
+const OrderDetail = require('../models/orderDetail');
 
 // Lấy danh sách đơn hàng
 orderRouter.get('/orders', async (req, res) => {
