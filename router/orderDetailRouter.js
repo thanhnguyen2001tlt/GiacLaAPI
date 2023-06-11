@@ -3,7 +3,7 @@ const orderDetailRouter = express.Router();
 const OrderDetail = require('../models/orderDetail');
 
 // Lấy danh sách chi tiết đơn hàng
-orderDetailRouter.get('/order-details', async (req, res) => {
+orderDetailRouter.get('/orderDetails', async (req, res) => {
   try {
     const orderDetails = await OrderDetail.find();
     res.json(orderDetails);
@@ -14,7 +14,7 @@ orderDetailRouter.get('/order-details', async (req, res) => {
 });
 
 // Thêm chi tiết đơn hàng mới
-orderDetailRouter.post('/order-details', async (req, res) => {
+orderDetailRouter.post('/orderDetails', async (req, res) => {
   const { order, service, servicePrice, quantity, subtotal } = req.body;
   const orderDetail = new OrderDetail({ order, service, servicePrice, quantity, subtotal });
 
@@ -28,7 +28,7 @@ orderDetailRouter.post('/order-details', async (req, res) => {
 });
 
 // Cập nhật thông tin chi tiết đơn hàng
-orderDetailRouter.put('/order-details/:id', async (req, res) => {
+orderDetailRouter.put('/orderDetails/:id', async (req, res) => {
   const { id } = req.params;
   const { order, service, servicePrice, quantity, subtotal } = req.body;
 
@@ -46,7 +46,7 @@ orderDetailRouter.put('/order-details/:id', async (req, res) => {
 });
 
 // Xóa chi tiết đơn hàng
-orderDetailRouter.delete('/order-details/:id', async (req, res) => {
+orderDetailRouter.delete('/orderDetails/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
