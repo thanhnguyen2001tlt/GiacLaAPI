@@ -13,6 +13,19 @@ orderRouter.get('/orders', async (req, res) => {
   }
 });
 
+// Lấy chi tiết đơn hàng dựa trên ID đơn hàng
+orderRouter.get('/getorders/:orderId', async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const orderDetails = await OrderDetail.find({ order: orderId });
+    res.json(orderDetails);
+  } catch (error) {
+    console.error('Failed to get order details', error);
+    res.status(500).json({ error: 'Failed to get order details' });
+  }
+});
+
 // Thêm đơn hàng mới
 orderRouter.post('/orders', async (req, res) => {
   const { customer, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
