@@ -10,6 +10,10 @@ app.use("/api/", require("./router/customerRouter"));
 app.use("/api/", require("./router/employeeRouter"));
 app.use("/api/", require("./router/ingredientRouter"));
 app.use("/api/", require("./router/serviceRouter"));
+app.use("/api/", require("./router/orderRouter"));
+app.use("/api/", require("./router/orderDetailRouter"));
+
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT) 
 
