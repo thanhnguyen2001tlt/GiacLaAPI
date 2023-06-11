@@ -14,6 +14,21 @@ orderRouter.get('/orders', async (req, res) => {
   }
 });
 
+
+// Lấy danh sách đơn hàng dựa trên ID khách hàng
+orderRouter.get('/getOrderCustomer/:customerId', async (req, res) => {
+  const { customerId } = req.params;
+
+  try {
+    const orders = await Order.find({ customer: customerId });
+    res.json(orders);
+  } catch (error) {
+    console.error('Failed to get orders', error);
+    res.status(500).json({ error: 'Failed to get orders' });
+  }
+});
+
+
 // Lấy chi tiết đơn hàng dựa trên ID đơn hàng
 orderRouter.get('/getorders/:orderId', async (req, res) => {
   const { orderId } = req.params;
