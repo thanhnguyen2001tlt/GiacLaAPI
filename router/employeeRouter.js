@@ -56,9 +56,9 @@ employeeRouter.get('/employees', async (req, res) => {
 // Thêm nhân viên mới
 employeeRouter.post('/employees', async (req, res) => {
   // Kiểm tra vai trò của người dùng
-  // if (req.role !== 'admin') {
-  //   return res.status(403).json({ error: 'Only admins can add employees' });
-  // }
+  if (req.role !== 'admin') {
+    return res.status(403).json({ error: 'Only admins can add employees' });
+  }
 
   const { name, username, password, role, image, phone, cccd, address } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
