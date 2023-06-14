@@ -41,26 +41,6 @@ employeeRouter.post('/login', async (req, res) => {
   }
 });
 
-// Middleware xác thực JWT
-function authenticateJWT(req, res, next) {
-  const token = req.headers.authorization;
-
-  if (token) {
-    jwt.verify(token, secretKey, (err, decodedToken) => {
-      if (err) {
-        console.error('JWT verification failed', err);
-        return res.status(403).json({ error: 'Invalid token' });
-      }
-
-      req.employeeId = decodedToken.employeeId;
-      req.role = decodedToken.role;
-      next();
-    });
-  } else {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
-}
-
 
 // Lấy danh sách nhân viên
 employeeRouter.get('/employees', async (req, res) => {
