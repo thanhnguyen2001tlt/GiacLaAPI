@@ -4,61 +4,6 @@ const jwt = require('jsonwebtoken');
 const Employee = require('../models/employee');
 const employeeRouter = express.Router();
 
-// Đăng nhập
-employeeRouter.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-
-  try {
-    // Tìm kiếm nhân viên dựa trên username
-    const employee = await Employee.findOne({ username });
-
-    if (!employee) {
-      // Nếu không tìm thấy nhân viên, trả về lỗi đăng nhập không thành công
-      return res.status(401).json({ error: 'Invalid username or password' });
-    }
-
-    // Kiểm tra mật khẩu
-    const passwordMatch = await bcrypt.compare(password, employee.password);
-
-    if (!passwordMatch) {
-      // Nếu mật khẩu không khớp, trả về lỗi đăng nhập không thành công
-      return res.status(401).json({ error: 'Invalid username or password' });
-    }
-
-    // Tạo mã thông báo JWT
-    const token = jwt.sign(
-      { employeeId: employee._id, role: employee.role },
-      'your_secret_key_here',
-      { expiresIn: '1h' }
-    );
-
-    // Trả về mã thông báo và thông tin nhân viên đã đăng nhập thành công
-    res.json({ token, employee });
-  } catch (error) {
-    console.error('Login failed', error);
-    res.status(500).json({ error: 'Login failed' });
-  }
-});
-
-// Middleware xác thực JWT
-function authenticateJWT(req, res, next) {
-  const token = req.headers.authorization;
-
-  if (token) {
-    jwt.verify(token, 'your_secret_key_here', (err, decodedToken) => {
-      if (err) {
-        console.error('JWT verification failed', err);
-        return res.status(403).json({ error: 'Invalid token' });
-      }
-
-      req.employeeId = decodedToken.employeeId;
-      req.role = decodedToken.role;
-      next();
-    });
-  } else {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
-}
 
 // Lấy danh sách nhân viên
 employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
