@@ -22,16 +22,8 @@ employeeRouter.post('/login', async (req, res) => {
 
     if (!passwordMatch) {
       // Nếu mật khẩu không khớp, trả về lỗi đăng nhập không thành công
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: ' username or password not macth' });
     }
-
-    // Tạo mã thông báo JWT với khóa bí mật ngẫu nhiên
-    const secretKey = crypto.randomBytes(32).toString('hex');
-    const token = jwt.sign(
-      { employeeId: employee._id, role: employee.role },
-      secretKey,
-      { expiresIn: '12h' }
-    );
 
     // Trả về mã thông báo và thông tin nhân viên đã đăng nhập thành công
     res.json({ token, employee });
