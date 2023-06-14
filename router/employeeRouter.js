@@ -15,8 +15,8 @@ employeeRouter.get('/employees', async (req, res) => {
 
 // Thêm nhân viên mới
 employeeRouter.post('/employees', async (req, res) => {
-  const { name, image, phone, cccd, address } = req.body;
-  const employee = new Employee({ name, image, phone, cccd, address });
+  const { name,username,password, role,image, phone, cccd, address } = req.body;
+  const employee = new Employee({ name,username,password, image, phone, cccd, address});
 
   try {
     const savedEmployee = await employee.save();
@@ -30,12 +30,12 @@ employeeRouter.post('/employees', async (req, res) => {
 // Cập nhật thông tin nhân viên
 employeeRouter.put('/employees/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, image, phone, cccd, address } = req.body;
+  const { name,username,password, role,image, phone, cccd, address } = req.body;
 
   try {
     const updatedEmployee = await Employee.findByIdAndUpdate(
       id,
-      { name, image, phone, cccd, address },
+      {name,username,password, role,image, phone, cccd, address },
       { new: true }
     );
     res.json(updatedEmployee);
