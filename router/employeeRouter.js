@@ -1,4 +1,6 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Employee = require('../models/employee');
 const employeeRouter = express.Router();
 
@@ -25,7 +27,7 @@ employeeRouter.post('/login', async (req, res) => {
 
     // Tạo mã thông báo JWT
     const token = jwt.sign(
-      { employeeId: employee._id },
+      { employeeId: employee._id, role: employee.role },
       'your_secret_key_here',
       { expiresIn: '1h' }
     );
@@ -38,8 +40,28 @@ employeeRouter.post('/login', async (req, res) => {
   }
 });
 
-// Lấy danh sách nhân viên trừ dữ liệu "role" là "employee"
-employeeRouter.get('/employees', async (req, res) => {
+// Middleware xác thực JWT
+function authenticateJWT(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (token) {
+    jwt.verify(token, 'your_secret_key_here', (err, decodedToken) => {
+      if (err) {
+        console.error('JWT verification failed', err);
+        return res.status(403).json({ error: 'Invalid token' });
+      }
+
+      req.employeeId = decodedToken.employeeId;
+      req.role = decodedToken.role;
+      next();
+    });
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+}
+
+// Lấy danh sách nhân viên
+employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
   try {
     const employees = await Employee.find({ role: { $ne: 'admin' } });
     res.json(employees);
@@ -49,12 +71,25 @@ employeeRouter.get('/employees', async (req, res) => {
   }
 });
 
-
-
 // Thêm nhân viên mới
-employeeRouter.post('/employees', async (req, res) => {
-  const { name,username,password, role,image, phone, cccd, address } = req.body;
-  const employee = new Employee({name,username,password, role,image, phone, cccd, address});
+employeeRouter.post('/employees', authenticateJWT, async (req, res) => {
+  // Kiểm tra vai trò của người dùng
+  if (req.role !== 'admin') {
+    return res.status(403).json({ error: 'Only admins can add employees' });
+  }
+
+  const { name, username, password, role, image, phone, cccd, address } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const employee = new Employee({
+    name,
+    username,
+    password: hashedPassword,
+    role,
+    image,
+    phone,
+    cccd,
+    address,
+  });
 
   try {
     const savedEmployee = await employee.save();
@@ -66,14 +101,29 @@ employeeRouter.post('/employees', async (req, res) => {
 });
 
 // Cập nhật thông tin nhân viên
-employeeRouter.put('/employees/:id', async (req, res) => {
+employeeRouter.put('/employees/:id', authenticateJWT, async (req, res) => {
+  // Kiểm tra vai trò của người dùng
+  if (req.role !== 'admin') {
+    return res.status(403).json({ error: 'Only admins can update employees' });
+  }
+
   const { id } = req.params;
-  const { name,username,password, role,image, phone, cccd, address } = req.body;
+  const { name, username, password, role, image, phone, cccd, address } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
     const updatedEmployee = await Employee.findByIdAndUpdate(
       id,
-      {name,username,password, role,image, phone, cccd, address },
+      {
+        name,
+        username,
+        password: hashedPassword,
+        role,
+        image,
+        phone,
+        cccd,
+        address,
+      },
       { new: true }
     );
     res.json(updatedEmployee);
@@ -84,7 +134,12 @@ employeeRouter.put('/employees/:id', async (req, res) => {
 });
 
 // Xóa nhân viên
-employeeRouter.delete('/employees/:id', async (req, res) => {
+employeeRouter.delete('/employees/:id', authenticateJWT, async (req, res) => {
+  // Kiểm tra vai trò của người dùng
+  if (req.role !== 'admin') {
+    return res.status(403).json({ error: 'Only admins can delete employees' });
+  }
+
   const { id } = req.params;
 
   try {
