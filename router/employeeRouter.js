@@ -2,16 +2,54 @@ const express = require('express');
 const Employee = require('../models/employee');
 const employeeRouter = express.Router();
 
-// Lấy danh sách nhân viên
+// Đăng nhập
+employeeRouter.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Tìm kiếm nhân viên dựa trên username
+    const employee = await Employee.findOne({ username });
+
+    if (!employee) {
+      // Nếu không tìm thấy nhân viên, trả về lỗi đăng nhập không thành công
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    // Kiểm tra mật khẩu
+    const passwordMatch = await bcrypt.compare(password, employee.password);
+
+    if (!passwordMatch) {
+      // Nếu mật khẩu không khớp, trả về lỗi đăng nhập không thành công
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    // Tạo mã thông báo JWT
+    const token = jwt.sign(
+      { employeeId: employee._id },
+      'your_secret_key_here',
+      { expiresIn: '1h' }
+    );
+
+    // Trả về mã thông báo và thông tin nhân viên đã đăng nhập thành công
+    res.json({ token, employee });
+  } catch (error) {
+    console.error('Login failed', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+
+// Lấy danh sách nhân viên trừ dữ liệu role = admin
 employeeRouter.get('/employees', async (req, res) => {
   try {
-    const employees = await Employee.find();
+    const employees = await Employee.find({ role: { $ne: 'admin' } });
     res.json(employees);
   } catch (error) {
     console.error('Failed to get employees', error);
     res.status(500).json({ error: 'Failed to get employees' });
   }
 });
+
 
 // Thêm nhân viên mới
 employeeRouter.post('/employees', async (req, res) => {
