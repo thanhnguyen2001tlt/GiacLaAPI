@@ -38,17 +38,17 @@ employeeRouter.post('/login', async (req, res) => {
   }
 });
 
-
-// Lấy danh sách nhân viên trừ dữ liệu role = admin
+// Lấy danh sách nhân viên trừ dữ liệu "role" là "employee"
 employeeRouter.get('/employees', async (req, res) => {
   try {
-    const employees = await Employee.find({ role: { $ne: 'admin' } });
+    const employees = await Employee.find({ role: { $ne: 'employee' } });
     res.json(employees);
   } catch (error) {
     console.error('Failed to get employees', error);
     res.status(500).json({ error: 'Failed to get employees' });
   }
 });
+
 
 
 // Thêm nhân viên mới
