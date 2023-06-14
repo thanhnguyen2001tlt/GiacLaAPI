@@ -63,7 +63,7 @@ function authenticateJWT(req, res, next) {
 
 
 // Lấy danh sách nhân viên
-employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
+employeeRouter.get('/employees', async (req, res) => {
   try {
     const employees = await Employee.find({ role: { $ne: 'admin' } });
     res.json(employees);
@@ -74,7 +74,7 @@ employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
 });
 
 // Thêm nhân viên mới
-employeeRouter.post('/employees', authenticateJWT, async (req, res) => {
+employeeRouter.post('/employees', async (req, res) => {
   // Kiểm tra vai trò của người dùng
   if (req.role !== 'admin') {
     return res.status(403).json({ error: 'Only admins can add employees' });
@@ -98,12 +98,14 @@ employeeRouter.post('/employees', authenticateJWT, async (req, res) => {
     res.json(savedEmployee);
   } catch (error) {
     console.error('Failed to create employee', error);
-    res.status(500).json({ error: 'Failed to create employee' });
+    res.status(500).json({ error
+
+: 'Failed to create employee' });
   }
 });
 
 // Cập nhật thông tin nhân viên
-employeeRouter.put('/employees/:id', authenticateJWT, async (req, res) => {
+employeeRouter.put('/employees/:id', async (req, res) => {
   // Kiểm tra vai trò của người dùng
   if (req.role !== 'admin') {
     return res.status(403).json({ error: 'Only admins can update employees' });
@@ -136,7 +138,7 @@ employeeRouter.put('/employees/:id', authenticateJWT, async (req, res) => {
 });
 
 // Xóa nhân viên
-employeeRouter.delete('/employees/:id', authenticateJWT, async (req, res) => {
+employeeRouter.delete('/employees/:id', async (req, res) => {
   // Kiểm tra vai trò của người dùng
   if (req.role !== 'admin') {
     return res.status(403).json({ error: 'Only admins can delete employees' });
