@@ -41,7 +41,7 @@ employeeRouter.post('/login', async (req, res) => {
 // Lấy danh sách nhân viên trừ dữ liệu "role" là "employee"
 employeeRouter.get('/employees', async (req, res) => {
   try {
-    const employees = await Employee.find({ role: { $ne: 'employee' } });
+    const employees = await Employee.find({ role: { $ne: 'admin' } });
     res.json(employees);
   } catch (error) {
     console.error('Failed to get employees', error);
@@ -54,7 +54,7 @@ employeeRouter.get('/employees', async (req, res) => {
 // Thêm nhân viên mới
 employeeRouter.post('/employees', async (req, res) => {
   const { name,username,password, role,image, phone, cccd, address } = req.body;
-  const employee = new Employee({ name,username,password, image, phone, cccd, address});
+  const employee = new Employee({name,username,password, role,image, phone, cccd, address});
 
   try {
     const savedEmployee = await employee.save();
