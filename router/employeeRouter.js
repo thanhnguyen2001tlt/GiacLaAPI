@@ -1,13 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const Employee = require('../models/employee');
 const employeeRouter = express.Router();
-
+const secretKey = "MySuperSecretKey113";
 // Đăng nhập
 employeeRouter.post('/login', async (req, res) => {
   const { username, password } = req.body;
-
   try {
     // Tìm kiếm nhân viên dựa trên username
     const employee = await Employee.findOne({ username });
@@ -20,12 +20,15 @@ employeeRouter.post('/login', async (req, res) => {
     // Kiểm tra mật khẩu
     const passwordMatch = await bcrypt.compare(password, employee.password);
 
+
     if (!passwordMatch) {
       // Nếu mật khẩu không khớp, trả về lỗi đăng nhập không thành công
       return res.status(401).json({ error: 'Not macth username or password ' });
     }
-    // Tạo mã thông báo JWT với khóa bí mật ngẫu nhiên
-    const secretKey = crypto.randomBytes(32).toString('hex');
+
+   
+
+
     const token = jwt.sign(
       { employeeId: employee._id, role: employee.role },
       secretKey,
