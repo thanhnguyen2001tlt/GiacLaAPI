@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const Employee = require('../models/employee');
 const employeeRouter = express.Router();
 const secretKey = "MySuperSecretKey113";
+
 // Đăng nhập
 employeeRouter.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -23,7 +24,7 @@ employeeRouter.post('/login', async (req, res) => {
 
     if (!passwordMatch) {
       // Nếu mật khẩu không khớp, trả về lỗi đăng nhập không thành công
-      return res.status(401).json({ error: 'Not macth username or password ' });
+      return res.status(401).json({ error: 'Not macth username or password' });
     }
 
    
