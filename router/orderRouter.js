@@ -1,10 +1,34 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const orderRouter = express.Router();
 const Order = require('../models/order');
 const OrderDetail = require('../models/orderDetail');
+const secretKey = "MySuperSecretKey113";
+
+// Middleware xác thực JWT
+function authenticateJWT(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (token) {
+    jwt.verify(token, secretKey, (err, decodedToken) => {
+      if (err) {
+        console.error('JWT verification failed', err);
+        return res.status(403).json({ error: 'Invalid token' });
+      }
+
+      req.employeeId = decodedToken.employeeId;
+      req.role = decodedToken.role;
+      next();
+    });
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+}
+
+
 
 // Lấy danh sách đơn hàng
-orderRouter.get('/orders', async (req, res) => {
+orderRouter.get('/orders', authenticateJWT, async (req, res) => {
   try {
     const orders = await Order.find();
     res.json(orders);
@@ -16,7 +40,7 @@ orderRouter.get('/orders', async (req, res) => {
 
 
 // Lấy danh sách đơn hàng dựa trên ID khách hàng
-orderRouter.get('/getOrderCustomer/:customerId', async (req, res) => {
+orderRouter.get('/getOrderCustomer/:customerId', authenticateJWT, async (req, res) => {
   const { customerId } = req.params;
   try {
     const orders = await Order.find({ customer: customerId });
@@ -29,7 +53,7 @@ orderRouter.get('/getOrderCustomer/:customerId', async (req, res) => {
 
 
 // Lấy chi tiết đơn hàng dựa trên ID đơn hàng
-orderRouter.get('/getorders/:orderId', async (req, res) => {
+orderRouter.get('/getorders/:orderId', authenticateJWT, async (req, res) => {
   const { orderId } = req.params;
 
   try {
@@ -42,7 +66,7 @@ orderRouter.get('/getorders/:orderId', async (req, res) => {
 });
 
 // Thêm đơn hàng mới
-orderRouter.post('/orders', async (req, res) => {
+orderRouter.post('/orders', authenticateJWT, async (req, res) => {
   const { customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
   const order = new Order({ customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount });
 
@@ -56,7 +80,7 @@ orderRouter.post('/orders', async (req, res) => {
 });
 
 // Cập nhật thông tin đơn hàng
-orderRouter.put('/orders/:id', async (req, res) => {
+orderRouter.put('/orders/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   const { customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
 
@@ -74,7 +98,7 @@ orderRouter.put('/orders/:id', async (req, res) => {
 });
 
 // Xóa đơn hàng
-orderRouter.delete('/orders/:id', async (req, res) => {
+orderRouter.delete('/orders/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
 
   try {

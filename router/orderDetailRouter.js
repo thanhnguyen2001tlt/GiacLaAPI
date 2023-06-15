@@ -1,9 +1,31 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const orderDetailRouter = express.Router();
 const OrderDetail = require('../models/orderDetail');
+const secretKey = "MySuperSecretKey113";
+
+// Middleware xác thực JWT
+function authenticateJWT(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (token) {
+    jwt.verify(token, secretKey, (err, decodedToken) => {
+      if (err) {
+        console.error('JWT verification failed', err);
+        return res.status(403).json({ error: 'Invalid token' });
+      }
+
+      req.employeeId = decodedToken.employeeId;
+      req.role = decodedToken.role;
+      next();
+    });
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+}
 
 // Lấy danh sách chi tiết đơn hàng
-orderDetailRouter.get('/orderDetails', async (req, res) => {
+orderDetailRouter.get('/orderDetails', authenticateJWT, async (req, res) => {
   try {
     const orderDetails = await OrderDetail.find();
     res.json(orderDetails);
@@ -14,7 +36,7 @@ orderDetailRouter.get('/orderDetails', async (req, res) => {
 });
 
 // Thêm chi tiết đơn hàng mới
-orderDetailRouter.post('/orderDetails', async (req, res) => {
+orderDetailRouter.post('/orderDetails', authenticateJWT, async (req, res) => {
   const { order, service, servicePrice, quantity, subtotal } = req.body;
   const orderDetail = new OrderDetail({ order, service, servicePrice, quantity, subtotal });
 
@@ -28,7 +50,7 @@ orderDetailRouter.post('/orderDetails', async (req, res) => {
 });
 
 // Cập nhật thông tin chi tiết đơn hàng
-orderDetailRouter.put('/orderDetails/:id', async (req, res) => {
+orderDetailRouter.put('/orderDetails/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   const { order, service, servicePrice, quantity, subtotal } = req.body;
 
@@ -46,7 +68,7 @@ orderDetailRouter.put('/orderDetails/:id', async (req, res) => {
 });
 
 // Xóa chi tiết đơn hàng
-orderDetailRouter.delete('/orderDetails/:id', async (req, res) => {
+orderDetailRouter.delete('/orderDetails/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
 
   try {
