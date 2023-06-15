@@ -15,8 +15,8 @@ customerRouter.get('/customers', async (req, res) => {
 
 // Thêm khách hàng mới
 customerRouter.post('/customers', async (req, res) => {
-  const {name,image,phone,address } = req.body;
-  const customer = new Customer({name,image,phone,address});
+  const {name,image,phone,address,point } = req.body;
+  const customer = new Customer({name,image,phone,address,point});
 
   try {
     const savedCustomer = await customer.save();
@@ -30,12 +30,12 @@ customerRouter.post('/customers', async (req, res) => {
 // Cập nhật thông tin khách hàng
   customerRouter.put('/customers/:id', async (req, res) => {
   const { id } = req.params;
-  const { name,image,phone,address } = req.body;
+  const { name,image,phone,address,point } = req.body;
 
   try {
     const updatedCustomer = await Customer.findByIdAndUpdate(
       id,
-      {name,image,phone,address},
+      {name,image,phone,address,point},
       { new: true }
     );
     res.json(updatedCustomer);

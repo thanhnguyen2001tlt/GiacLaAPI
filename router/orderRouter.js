@@ -44,7 +44,7 @@ orderRouter.get('/getorders/:orderId', async (req, res) => {
 
 // Thêm đơn hàng mới
 orderRouter.post('/orders', async (req, res) => {
-  const { customer, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
+  const { customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
   const order = new Order({ customer, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount });
 
   try {
@@ -59,12 +59,12 @@ orderRouter.post('/orders', async (req, res) => {
 // Cập nhật thông tin đơn hàng
 orderRouter.put('/orders/:id', async (req, res) => {
   const { id } = req.params;
-  const { customer, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
+  const { customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
 
   try {
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
-      { customer, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount },
+      { customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount },
       { new: true }
     );
     res.json(updatedOrder);
