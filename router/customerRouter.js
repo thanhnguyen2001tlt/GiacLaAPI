@@ -1,9 +1,31 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const customerRouter = express.Router();
 const Customer = require('../models/customer');
+const secretKey = "MySuperSecretKey113";
+
+// Middleware xác thực JWT
+function authenticateJWT(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (token) {
+    jwt.verify(token, secretKey, (err, decodedToken) => {
+      if (err) {
+        console.error('JWT verification failed', err);
+        return res.status(403).json({ error: 'Invalid token' });
+      }
+
+      req.employeeId = decodedToken.employeeId;
+      req.role = decodedToken.role;
+      next();
+    });
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+}
 
 // Lấy danh sách khách hàng
-customerRouter.get('/customers', async (req, res) => {
+customerRouter.get('/customers', authenticateJWT, async (req, res) => {
   try {
     const customers = await Customer.find();
     res.json(customers);
@@ -14,7 +36,7 @@ customerRouter.get('/customers', async (req, res) => {
 });
 
 // Thêm khách hàng mới
-customerRouter.post('/customers', async (req, res) => {
+customerRouter.post('/customers', authenticateJWT, async (req, res) => {
   const {name,image,phone,address,point } = req.body;
   const customer = new Customer({name,image,phone,address,point});
 
@@ -28,8 +50,7 @@ customerRouter.post('/customers', async (req, res) => {
 });
 
 // Cập nhật thông tin khách hàng
-  customerRouter.put('/customers/:id', async (req, res) => {
-  const { id } = req.params;
+customerRouter.put('/customers/:id', authenticateJWT, async (req, res) => {
   const { name,image,phone,address,point } = req.body;
 
   try {
@@ -46,7 +67,7 @@ customerRouter.post('/customers', async (req, res) => {
 });
 
 // Xóa khách hàng
-customerRouter.delete('/customers/:id', async (req, res) => {
+customerRouter.delete('/customers/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
 
   try {
