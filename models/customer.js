@@ -4,6 +4,10 @@ const customer  =  new  mongoose.Schema ({
         type:String,
         required:true
     },
+    image:{
+        type:String,
+        required:true
+    },
     phone:{
         type:String,
         required:true,
@@ -12,6 +16,5 @@ const customer  =  new  mongoose.Schema ({
         type:String,
         required:false,
     }
-    
 });
 module.exports = mongoose.model("customer",customer);
