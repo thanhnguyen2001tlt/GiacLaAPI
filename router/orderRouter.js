@@ -18,7 +18,6 @@ orderRouter.get('/orders', async (req, res) => {
 // Lấy danh sách đơn hàng dựa trên ID khách hàng
 orderRouter.get('/getOrderCustomer/:customerId', async (req, res) => {
   const { customerId } = req.params;
-
   try {
     const orders = await Order.find({ customer: customerId });
     res.json(orders);
@@ -45,7 +44,7 @@ orderRouter.get('/getorders/:orderId', async (req, res) => {
 // Thêm đơn hàng mới
 orderRouter.post('/orders', async (req, res) => {
   const { customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount } = req.body;
-  const order = new Order({ customer, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount });
+  const order = new Order({ customer,employee, orderDate, deliveryDate, totalAmount, prepaidAmount, remainingAmount });
 
   try {
     const savedOrder = await order.save();
