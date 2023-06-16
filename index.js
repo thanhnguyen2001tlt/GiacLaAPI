@@ -11,10 +11,11 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*"); // Cho phép truy cập từ bất kỳ nguồn nào
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization" // Thêm Authorization vào danh sách cho phép
   );
   next();
 });
+
 
 app.use("/api/", require("./router/customerRouter"));
 app.use("/api/", require("./router/employeeRouter"));
