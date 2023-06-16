@@ -12,13 +12,13 @@ const customer  =  new  mongoose.Schema ({
         type:String,
         required:true,
     },
-    point:{
-        type:Number,
-        required:true,
-    },
     address:{
         type:String,
         required:false,
+    },
+    point:{
+        type:Number,
+        required:true,
     }
 });
 module.exports = mongoose.model("customer",customer);
