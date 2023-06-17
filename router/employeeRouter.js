@@ -64,7 +64,6 @@ function authenticateJWT(req, res, next) {
   }
 }
 
-
 // Lấy danh sách nhân viên
 employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
   try {
