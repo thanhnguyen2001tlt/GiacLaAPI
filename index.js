@@ -8,11 +8,12 @@ mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true }).then((
 
 // Thiết lập tiêu đề CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); 
+  res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization" 
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE"); // Thêm "PUT" vào danh sách phương thức cho phép
   next();
 });
 
