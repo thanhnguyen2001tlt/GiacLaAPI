@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const CryptoJS = require('crypto-js');
 const crypto = require('crypto');
 const Employee = require('../models/employee');
 const employeeRouter = express.Router();
@@ -69,12 +70,21 @@ function authenticateJWT(req, res, next) {
 employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
   try {
     const employees = await Employee.find({ role: { $ne: 'admin' } });
+    employees.password = decryptPassword( employees.password, secretKey);
     res.json(employees);
   } catch (error) {
     console.error('Failed to get employees', error);
     res.status(500).json({ error: 'Failed to get employees' });
   }
 });
+
+function decryptPassword(encryptedPassword, secretKey) {
+  const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey);
+  const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+  return decryptedPassword;
+}
+
+
 
 // Thêm nhân viên mới
 employeeRouter.post('/employees', authenticateJWT, async (req, res) => {
