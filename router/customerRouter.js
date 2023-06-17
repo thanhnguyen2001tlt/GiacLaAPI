@@ -60,22 +60,12 @@ customerRouter.put('/customers/:id', authenticateJWT, async (req, res) => {
       return res.status(404).json({ error: 'Customer not found' });
     }
 
-    if (name) {
-      customer.name = name;
-    }
-    if (image) {
-      customer.image = image;
-    }
-    if (phone) {
-      customer.phone = phone;
-    }
-    if (address) {
-      customer.address = address;
-    }
-    if (point) {
-      customer.point = point;
-    }
-
+    name && (customer.name = name);
+    image && (customer.image = image);
+    phone && (customer.phone = phone);
+    address && (customer.address = address);
+    point && (customer.point = point);
+    
     const updatedCustomer = await customer.save();
     res.json(updatedCustomer);
   } catch (error) {
