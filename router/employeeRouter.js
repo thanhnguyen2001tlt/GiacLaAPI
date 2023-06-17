@@ -112,30 +112,33 @@ employeeRouter.put('/employees/:id', authenticateJWT, async (req, res) => {
   }
 
   const { id } = req.params;
-  const { name, username, password, role, image, phone, cccd, address } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-
+  const { name, username, password, image, phone, cccd, address } = req.body;
+  
   try {
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-      id,
-      {
-        name,
-        username,
-        password: hashedPassword,
-        role,
-        image,
-        phone,
-        cccd,
-        address,
-      },
-      { new: true }
-    );
+    const employee = await Employee.findById(id);
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    employee.name = name || employee.name;
+    employee.username = username || employee.username;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      employee.password = hashedPassword;
+    }
+    employee.image = image || employee.image;
+    employee.phone = phone || employee.phone;
+    employee.cccd = cccd || employee.cccd;
+    employee.address = address || employee.address;
+    
+    const updatedEmployee = await employee.save();
     res.json(updatedEmployee);
   } catch (error) {
     console.error('Failed to update employee', error);
     res.status(500).json({ error: 'Failed to update employee' });
   }
 });
+
 
 // Xóa nhân viên
 employeeRouter.delete('/employees/:id', authenticateJWT, async (req, res) => {
