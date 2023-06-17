@@ -51,20 +51,39 @@ customerRouter.post('/customers', authenticateJWT, async (req, res) => {
 
 // Cập nhật thông tin khách hàng
 customerRouter.put('/customers/:id', authenticateJWT, async (req, res) => {
-  const { name,image,phone,address,point } = req.body;
+  const customerId = req.params.id;
+  const { name, image, phone, address, point } = req.body;
 
   try {
-    const updatedCustomer = await Customer.findByIdAndUpdate(
-      id,
-      {name,image,phone,address,point},
-      { new: true }
-    );
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found' });
+    }
+
+    if (name) {
+      customer.name = name;
+    }
+    if (image) {
+      customer.image = image;
+    }
+    if (phone) {
+      customer.phone = phone;
+    }
+    if (address) {
+      customer.address = address;
+    }
+    if (point) {
+      customer.point = point;
+    }
+
+    const updatedCustomer = await customer.save();
     res.json(updatedCustomer);
   } catch (error) {
     console.error('Failed to update customer', error);
     res.status(500).json({ error: 'Failed to update customer' });
   }
 });
+
 
 // Xóa khách hàng
 customerRouter.delete('/customers/:id', authenticateJWT, async (req, res) => {
