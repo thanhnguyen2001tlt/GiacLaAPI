@@ -70,8 +70,7 @@ function authenticateJWT(req, res, next) {
 employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
   try {
     const employees = await Employee.find({ role: { $ne: 'admin' } });
-    employees.password = decryptPassword( employees.password, secretKey);
-    res.json(employees);
+    res.json(employees,decryptPassword( employees.password, secretKey));
   } catch (error) {
     console.error('Failed to get employees', error);
     res.status(500).json({ error: 'Failed to get employees' });
