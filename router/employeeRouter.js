@@ -69,28 +69,7 @@ function authenticateJWT(req, res, next) {
 employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
   try {
     const employees = await Employee.find({ role: { $ne: 'admin' } });
-
-    // Giải mã mật khẩu cho từng nhân viên
-    const decryptedEmployees = await Promise.all(
-      employees.map(async (employee) => {
-        const { _id, name, username, password, role, image, phone, cccd, address } = employee;
-        const decryptedPassword = await decryptPassword(password);
-
-        return {
-          _id,
-          name,
-          username,
-          password: decryptedPassword,
-          role,
-          image,
-          phone,
-          cccd,
-          address,
-        };
-      })
-    );
-
-    res.json(decryptedEmployees);
+    res.json(employees);
   } catch (error) {
     console.error('Failed to get employees', error);
     res.status(500).json({ error: 'Failed to get employees' });
