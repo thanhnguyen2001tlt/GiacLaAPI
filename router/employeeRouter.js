@@ -67,7 +67,7 @@ function authenticateJWT(req, res, next) {
 // Lấy danh sách nhân viên
 employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
   try {
-    if (req.role !== 'admin') {
+    if (req.role == 'admin') {
       const employees = await Employee.find({ role: { $ne: 'admin' } });
       res.json(employees);
     }
