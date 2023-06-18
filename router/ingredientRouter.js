@@ -30,14 +30,26 @@ ingredientRouter.post('/ingredients', async (req, res) => {
 // Cập nhật thông tin nguyên liệu
 ingredientRouter.put('/ingredients/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, date, quantity, unitPrice, total, prepaid, remaining } = req.body;
+  const { name, date, quantity, unitPrice, total, prepaid } = req.body;
 
   try {
-    const updatedIngredient = await Ingredient.findByIdAndUpdate(
-      id,
-      { name, date, quantity, unitPrice, total, prepaid, remaining },
-      { new: true }
-    );
+    const ingredient = await Ingredient.findById(id);
+    if (!ingredient) {
+      return res.status(404).json({ error: 'Ingredient not found' });
+    }
+    name && (ingredient.name = name);
+    date && (ingredient.date = date);
+    quantity && (ingredient.quantity = quantity);
+    unitPrice && (ingredient.unitPrice = unitPrice);
+    total && (ingredient.total = total);
+    prepaid && (ingredient.prepaid = prepaid);
+
+    if (total && prepaid) {
+      const remaining = Math.max(total - prepaid, 0);
+      ingredient.remaining = remaining;
+    }
+
+    const updatedIngredient = await ingredient.save();
     res.json(updatedIngredient);
   } catch (error) {
     console.error('Failed to update ingredient', error);
