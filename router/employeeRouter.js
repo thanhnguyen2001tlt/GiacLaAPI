@@ -27,7 +27,7 @@ employeeRouter.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Not macth username or password' });
     }
 
-   
+
 
 
     const token = jwt.sign(
@@ -67,8 +67,10 @@ function authenticateJWT(req, res, next) {
 // Lấy danh sách nhân viên
 employeeRouter.get('/employees', authenticateJWT, async (req, res) => {
   try {
-    const employees = await Employee.find({ role: { $ne: 'admin' } });
-    res.json(employees);
+    if (req.role !== 'admin') {
+      const employees = await Employee.find({ role: { $ne: 'admin' } });
+      res.json(employees);
+    }
   } catch (error) {
     console.error('Failed to get employees', error);
     res.status(500).json({ error: 'Failed to get employees' });
@@ -113,7 +115,7 @@ employeeRouter.put('/employees/:id', authenticateJWT, async (req, res) => {
 
   const { id } = req.params;
   const { name, username, password, image, phone, cccd, address } = req.body;
-  
+
   try {
     const employee = await Employee.findById(id);
     if (!employee) {
@@ -130,7 +132,7 @@ employeeRouter.put('/employees/:id', authenticateJWT, async (req, res) => {
     employee.phone = phone || employee.phone;
     employee.cccd = cccd || employee.cccd;
     employee.address = address || employee.address;
-    
+
     const updatedEmployee = await employee.save();
     res.json(updatedEmployee);
   } catch (error) {
