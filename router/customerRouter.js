@@ -23,6 +23,23 @@ function authenticateJWT(req, res, next) {
     res.status(401).json({ error: 'Unauthorized' });
   }
 }
+// Lấy Thông tin khách hàng
+customerRouter.get('/customers/:customerId', authenticateJWT, async (req, res) => {
+  const customerId = req.params.customerId; // Lấy customerId từ URL
+
+  try {
+    const customer = await Customer.findById(customerId); // Tìm khách hàng theo customerId
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found' });
+    }
+
+    res.json(customer);
+  } catch (error) {
+    console.error('Failed to get customer', error);
+    res.status(500).json({ error: 'Failed to get customer' });
+  }
+});
+
 
 // Lấy danh sách khách hàng
 customerRouter.get('/customers', authenticateJWT, async (req, res) => {
