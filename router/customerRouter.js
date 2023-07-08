@@ -24,21 +24,22 @@ function authenticateJWT(req, res, next) {
   }
 }
 // Lấy Thông tin khách hàng
-customerRouter.get('/customers/:customerId', authenticateJWT, async (req, res) => {
-  const customerId = req.params.customerId; // Lấy customerId từ URL
-
+customerRouter.get('/customers/:sdt', authenticateJWT, async (req, res) => {
   try {
-    const customer = await Customer.findById(customerId); // Tìm khách hàng theo customerId
+    const sdt = req.params.sdt;
+    const customer = await Customer.findOne({ sdt: sdt });
+    
     if (!customer) {
-      return res.status(404).json({ error: 'Customer not found' });
+      return res.status(404).json({ error: 'Không tìm thấy khách hàng' });
     }
-
+    
     res.json(customer);
   } catch (error) {
-    console.error('Failed to get customer', error);
-    res.status(500).json({ error: 'Failed to get customer' });
+    console.error('Lỗi khi lấy thông tin khách hàng', error);
+    res.status(500).json({ error: 'Lỗi khi lấy thông tin khách hàng' });
   }
 });
+
 
 
 // Lấy danh sách khách hàng
