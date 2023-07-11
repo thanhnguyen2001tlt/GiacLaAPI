@@ -63,6 +63,20 @@ function authenticateJWT(req, res, next) {
     res.status(401).json({ error: 'Unauthorized' });
   }
 }
+// Lấy Thông tin nhân viên id
+customerRouter.get('/employees/:id', authenticateJWT, async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const employee = await Employee.findById(employeeId);
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+    res.json(employee);
+  } catch (error) {
+    console.error('Failed to get employee', error);
+    res.status(500).json({ error: 'Failed to get employee' });
+  }
+});
 
 
 // Lấy danh sách nhân viên
