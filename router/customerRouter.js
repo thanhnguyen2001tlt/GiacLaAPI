@@ -44,7 +44,7 @@ customerRouter.get('/customers/:sdt', authenticateJWT, async (req, res) => {
 // Lấy Thông tin khách hàng sdt
 customerRouter.get('/customers/:id', authenticateJWT, async (req, res) => {
   try {
-    const sdt = req.params._id;
+    const id = req.params.id;
     const customer = await Customer.findOne({ _id:id  });
     
     if (!customer) {
