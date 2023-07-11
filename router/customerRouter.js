@@ -23,7 +23,7 @@ function authenticateJWT(req, res, next) {
     res.status(401).json({ error: 'Unauthorized' });
   }
 }
-// Lấy Thông tin khách hàng
+// Lấy Thông tin khách hàng sdt
 customerRouter.get('/customers/:sdt', authenticateJWT, async (req, res) => {
   try {
     const sdt = req.params.sdt;
@@ -40,6 +40,23 @@ customerRouter.get('/customers/:sdt', authenticateJWT, async (req, res) => {
   }
 });
 
+
+// Lấy Thông tin khách hàng sdt
+customerRouter.get('/customers/:id', authenticateJWT, async (req, res) => {
+  try {
+    const sdt = req.params._id;
+    const customer = await Customer.findOne({ _id:id  });
+    
+    if (!customer) {
+      return res.status(404).json({ error: 'Không tìm thấy khách hàng' });
+    }
+    
+    res.json(customer);
+  } catch (error) {
+    console.error('Lỗi khi lấy thông tin khách hàng', error);
+    res.status(500).json({ error: 'Lỗi khi lấy thông tin khách hàng' });
+  }
+});
 
 
 // Lấy danh sách khách hàng
