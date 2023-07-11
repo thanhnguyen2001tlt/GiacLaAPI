@@ -34,6 +34,18 @@ orderDetailRouter.get('/orderDetails', authenticateJWT, async (req, res) => {
     res.status(500).json({ error: 'Failed to get order details' });
   }
 });
+// Lấy danh sách chi tiết đơn hàng theo id
+orderDetailRouter.get('/orderDetails/:orderId', authenticateJWT, async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const orderDetails = await OrderDetail.find({ order: orderId }).populate('order').populate('service');
+    res.json(orderDetails);
+  } catch (error) {
+    console.error('Failed to get order details', error);
+    res.status(500).json({ error: 'Failed to get order details' });
+  }
+});
+
 
 // Thêm chi tiết đơn hàng mới
 orderDetailRouter.post('/orderDetails', authenticateJWT, async (req, res) => {
