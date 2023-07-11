@@ -38,7 +38,7 @@ orderDetailRouter.get('/orderDetails', authenticateJWT, async (req, res) => {
 orderDetailRouter.get('/orderDetails/:orderId', authenticateJWT, async (req, res) => {
   try {
     const orderId = req.params.orderId;
-    const orderDetails = await OrderDetail.find({ order: orderId }).populate('order').populate('service');
+    const orderDetails = await OrderDetail.find({ order: orderId });
     res.json(orderDetails);
   } catch (error) {
     console.error('Failed to get order details', error);
