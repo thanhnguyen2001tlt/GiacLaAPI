@@ -64,7 +64,7 @@ function authenticateJWT(req, res, next) {
   }
 }
 // Lấy Thông tin nhân viên id
-customerRouter.get('/employees/:id', authenticateJWT, async (req, res) => {
+employeeRouter.get('/employees/:id', authenticateJWT, async (req, res) => {
   try {
     const employeeId = req.params.id;
     const employee = await Employee.findById(employeeId);
