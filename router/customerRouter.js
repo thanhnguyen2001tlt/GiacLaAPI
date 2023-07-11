@@ -42,7 +42,7 @@ customerRouter.get('/customers/:sdt', authenticateJWT, async (req, res) => {
 
 
 // Lấy Thông tin khách hàng id
-customerRouter.get('/customers/:id', authenticateJWT, async (req, res) => {
+customerRouter.get('/customer/:id', authenticateJWT, async (req, res) => {
   try {
     const customerId = req.params.id;
     const customer = await Customer.findById(customerId);
