@@ -45,7 +45,7 @@ customerRouter.get('/customers/:sdt', authenticateJWT, async (req, res) => {
 customerRouter.get('/customers/:id', authenticateJWT, async (req, res) => {
   try {
     const id = req.params.id;
-    const customer = await Customer.findOne({ _id:id  });
+    const customer = await Customer.findOne({ id:_id  });
     
     if (!customer) {
       return res.status(404).json({ error: 'Không tìm thấy khách hàng' });
