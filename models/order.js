@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
-  customer: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }],
-  employee: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee' }],
+  customer: String,
+  employee: String,
   orderDate: Date,
   deliveryDate: Date,
   totalAmount: Number,
