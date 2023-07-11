@@ -41,22 +41,21 @@ customerRouter.get('/customers/:sdt', authenticateJWT, async (req, res) => {
 });
 
 
-// Lấy Thông tin khách hàng sdt
+// Lấy Thông tin khách hàng id
 customerRouter.get('/customers/:id', authenticateJWT, async (req, res) => {
   try {
-    const id = req.params.id;
-    const customer = await Customer.findOne({ id:_id  });
-    
+    const customerId = req.params.id;
+    const customer = await Customer.findById(customerId);
     if (!customer) {
-      return res.status(404).json({ error: 'Không tìm thấy khách hàng' });
+      return res.status(404).json({ error: 'Customer not found' });
     }
-    
     res.json(customer);
   } catch (error) {
-    console.error('Lỗi khi lấy thông tin khách hàng', error);
-    res.status(500).json({ error: 'Lỗi khi lấy thông tin khách hàng' });
+    console.error('Failed to get customer', error);
+    res.status(500).json({ error: 'Failed to get customer' });
   }
 });
+
 
 
 // Lấy danh sách khách hàng
